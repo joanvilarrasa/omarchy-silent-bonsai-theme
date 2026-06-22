@@ -170,32 +170,10 @@ vim.lsp.config['zls'] = {
 	}
 }
 
--- LUA
-vim.lsp.config['lua_ls'] = {
-	cmd = { 'lua-language-server' },
-	filetypes = { 'lua' },
-	root_markers = {
-		'.luacheckrc',
-		'.stylua.toml',
-		'stylua.toml',
-		'selene.toml',
-		'selene.yml',
-		'.emmyrc.json',
-		'.luarc.json',
-		'.luarc.jsonc',
-
-	},
-	settings = {
-		Lua = {
-			codeLens = { enable = true },
-			hint = { enable = true, semicolon = 'Disable' },
-			workspace = {
-				library = vim.api.nvim_get_runtime_file("", true)
-			}
-
-		},
-	},
-}
+-- GO
+vim.lsp.config['gopls'] = {}
+-- Biome
+vim.lsp.config['biome'] = {}
 
 -- Enable or disable languages
 vim.lsp.enable({ "lua_ls", "zls", "gopls", "biome" })
