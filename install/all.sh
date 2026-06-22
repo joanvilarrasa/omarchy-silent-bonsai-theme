@@ -7,6 +7,4 @@ $SB_THEME_PATH/install/packages/install.sh
 $SB_THEME_PATH/install/omarchy/install.sh
 $SB_THEME_PATH/install/waybar/install.sh
 
-rm -rf ~/.config/nvim
-cp -r $SB_THEME_PATH/install/nvim ~/.config/nvim
 omarchy-theme-set silent-bonsai

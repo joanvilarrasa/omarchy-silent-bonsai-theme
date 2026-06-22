@@ -34,7 +34,6 @@ vim.pack.add({
 	{ src = 'https://github.com/stevearc/oil.nvim' },
 	{ src = 'https://github.com/folke/which-key.nvim' },
 	{ src = 'https://github.com/nvim-mini/mini.surround' },
-	-- { src = 'https://github.com/mason-org/mason.nvim' },
 	{ src = 'https://github.com/jake-stewart/multicursor.nvim' },
 	{ src = 'https://github.com/nvim-lua/plenary.nvim' },
 	{ src = 'https://github.com/nvim-telescope/telescope.nvim' },
@@ -43,7 +42,6 @@ vim.pack.add({
 	{ src = 'https://codeberg.org/ziglang/zig.vim' },
 })
 
--- require('mason').setup {}
 require('mini.surround').setup()
 require('multicursor-nvim').setup()
 require('oil').setup {}
@@ -200,7 +198,7 @@ vim.lsp.config['lua_ls'] = {
 }
 
 -- Enable or disable languages
-vim.lsp.enable({ "lua_ls", "zls" })
+vim.lsp.enable({ "lua_ls", "zls", "gopls", "biome" })
 
 -- --------------------------------------------------------------------------------------
 -- [[ COLORSCHEME ]]
