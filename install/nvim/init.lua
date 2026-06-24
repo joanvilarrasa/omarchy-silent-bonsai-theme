@@ -39,12 +39,14 @@ vim.pack.add({
 	{ src = 'https://github.com/nvim-telescope/telescope.nvim' },
 	{ src = 'https://github.com/nvim-telescope/telescope-ui-select.nvim' },
 	{ src = 'https://github.com/nvim-telescope/telescope-fzf-native.nvim' },
+	{ src = 'https://github.com/esmuellert/codediff.nvim' },
+	{ src = 'https://github.com/NeogitOrg/neogit' },
 	{ src = 'https://codeberg.org/ziglang/zig.vim' },
 })
 
 require('mini.surround').setup()
 require('multicursor-nvim').setup()
-require('oil').setup {}
+require('oil').setup()
 
 require('telescope').setup {
 	extensions = {
@@ -61,6 +63,8 @@ require('which-key').setup {
 	},
 }
 
+require('neogit').setup()
+
 -- --------------------------------------------------------------------------------------
 -- [[ KEYMAPS AND CONFIG ]]
 -- --------------------------------------------------------------------------------------
@@ -74,7 +78,10 @@ vim.keymap.set('x', '<A-k>', ":m '<-2<CR>gv=gv") -- Move down (Select mode)
 vim.keymap.set('i', '<Tab>', 'pumvisible() ? "<C-n><C-y>" : "<Tab>"', { expr = true, silent = true }) -- Select first completion with tab
 
 -- Oil
-vim.keymap.set('n', '<leader>e', ":Oil<CR>")
+vim.keymap.set('n', '<leader>e', ":Oil<CR>", { desc = 'File [E]xplorer' })
+
+-- Neogit
+vim.keymap.set('n', '<leader>g', '<cmd>Neogit<CR>', { desc = '[G]it' })
 
 -- Telescope
 local builtin = require 'telescope.builtin'
