@@ -31,13 +31,13 @@ local palette = {
   bg_statusline = '#0D1B22',
   bg_visual    = '#2b4040',
   bg_search    = '#2d4952',
-  border       = '#eddcc8',
-  border_highlight = '#eddcc8',
+  border       = '#f5e6de',
+  border_highlight = '#f5e6de',
   comment      = '#7C98A1',
   fg           = '#f5e6de',
-  fg_dark      = '#eddcc8',
+  fg_dark      = '#ebcbb9',
   fg_gutter    = '#345760',
-  fg_sidebar   = '#eddcc8',
+  fg_sidebar   = '#ebcbb9',
   none         = 'NONE',
 
   -- Core palette
@@ -49,11 +49,11 @@ local palette = {
   green2       = '#8edac5',
   yellow       = '#FDD351',
   yellow1      = '#FDC200',
-  orange       = '#eddcc8',
-  orange1      = '#eddcc8',
+  orange       = '#ebcbb9',
+  orange1      = '#ebcbb9',
   blue         = '#6394F3',
   blue1        = '#4F81F1',
-  blue2        = '#8DAEF6',
+  blue2        = '#8edac5',
   cyan         = '#8edac5',
   cyan1        = '#8edac5',
   cyan2        = '#8edac5',
@@ -111,6 +111,56 @@ function M.blend(fg, alpha, bg)
     return math.floor(math.min(math.max(0, ret), 255) + 0.5)
   end
   return string.format('#%02x%02x%02x', blend(1), blend(2), blend(3))
+end
+
+local function is_hex_color(color)
+  return type(color) == 'string' and color:match '^#%x%x%x%x%x%x$' ~= nil
+end
+
+local function channel_to_linear(channel)
+  local value = channel / 255
+  if value <= 0.03928 then
+    return value / 12.92
+  end
+  return ((value + 0.055) / 1.055) ^ 2.4
+end
+
+local function color_luminance(color)
+  local r = tonumber(color:sub(2, 3), 16)
+  local g = tonumber(color:sub(4, 5), 16)
+  local b = tonumber(color:sub(6, 7), 16)
+  local lr = channel_to_linear(r)
+  local lg = channel_to_linear(g)
+  local lb = channel_to_linear(b)
+  return 0.2126 * lr + 0.7152 * lg + 0.0722 * lb
+end
+
+local function cap_luminance(color, max_color)
+  if not is_hex_color(color) or not is_hex_color(max_color) then
+    return color
+  end
+
+  local max_luma = color_luminance(max_color)
+  if color_luminance(color) <= max_luma then
+    return color
+  end
+
+  local lo = 0
+  local hi = 1
+  local best = max_color
+
+  for _ = 1, 12 do
+    local mid = (lo + hi) / 2
+    local candidate = M.blend(color, mid, max_color)
+    if color_luminance(candidate) <= max_luma then
+      best = candidate
+      lo = mid
+    else
+      hi = mid
+    end
+  end
+
+  return best
 end
 
 local function get_highlights(c, opts)
@@ -214,9 +264,9 @@ local function get_highlights(c, opts)
     htmlH2                      = { fg = c.fg, bold = true },
     qfFileName                  = { fg = c.fg },
     qfLineNr                    = { fg = c.fg_gutter },
-    Number                      = { fg = c.orange },
-    Float                       = { fg = c.orange },
-    Boolean                     = { fg = c.orange },
+    Number                      = { fg = c.cyan },
+    Float                       = { fg = c.cyan },
+    Boolean                     = { fg = c.cyan },
 
     -- LSP
     LspReferenceText            = { bg = c.fg_gutter },
@@ -257,6 +307,19 @@ local function get_highlights(c, opts)
     diffLine                    = { fg = c.comment },
     diffIndexLine               = { fg = c.purple },
     helpExample                 = { fg = c.comment },
+
+    -- Treesitter captures
+    ['@variable']               = { fg = c.fg },
+    ['@variable.member']        = { fg = c.fg },
+    ['@variable.builtin']       = { fg = c.fg },
+    ['@property']               = { fg = c.fg },
+    ['@field']                  = { fg = c.fg },
+    ['@function']               = { fg = c.fg, style = opts.styles.functions },
+    ['@function.call']          = { fg = c.fg },
+    ['@function.builtin']       = { fg = c.fg_dark },
+    ['@keyword']                = { fg = c.orange, style = opts.styles.keywords },
+    ['@operator']               = { fg = c.fg },
+    ['@punctuation']            = { fg = c.fg },
 
     -- LSP semantic tokens
     ['@lsp.type.boolean']                      = '@boolean',
@@ -391,6 +454,10 @@ function M.load(opts)
       end
       h.style = nil
     end
+
+    if type(h) == 'table' and is_hex_color(h.fg) then
+      h.fg = cap_luminance(h.fg, c.fg)
+    end
   end
 
   if vim.g.colors_name then
@@ -418,7 +485,7 @@ function M.load(opts)
     vim.g.terminal_color_8  = c.terminal_black
     vim.g.terminal_color_9  = c.magenta
     vim.g.terminal_color_10 = c.green2
-    vim.g.terminal_color_11 = blend(c.yellow, 0.8, '#ffffff')
+    vim.g.terminal_color_11 = blend(c.yellow, 0.8, c.fg)
     vim.g.terminal_color_12 = c.blue2
     vim.g.terminal_color_13 = c.purple2
     vim.g.terminal_color_14 = c.cyan1
