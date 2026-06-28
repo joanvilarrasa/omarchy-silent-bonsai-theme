@@ -44,6 +44,7 @@ vim.pack.add({
 	{ src = 'https://github.com/nvim-telescope/telescope-ui-select.nvim' },
 	{ src = 'https://github.com/nvim-telescope/telescope-fzf-native.nvim' },
 	{ src = 'https://github.com/esmuellert/codediff.nvim' },
+	{ src = 'https://github.com/dzfrias/arena.nvim' },
 	{ src = 'https://github.com/NeogitOrg/neogit' },
 	{ src = 'https://codeberg.org/ziglang/zig.vim' },
 })
@@ -52,7 +53,18 @@ require('mini.surround').setup()
 require('multicursor-nvim').setup()
 require('oil').setup()
 
+local telescope_actions = require "telescope.actions"
 require('telescope').setup {
+	pickers = {
+		buffers = {
+			initial_mode = "normal",
+			mappings = {
+				n = {
+					["<c-d>"] = telescope_actions.delete_buffer + telescope_actions.move_to_top,
+				}
+			},
+		},
+	},
 	extensions = {
 		['ui-select'] = { require('telescope.themes').get_dropdown() },
 	},
@@ -60,25 +72,44 @@ require('telescope').setup {
 pcall(require('telescope').load_extension, 'fzf')
 pcall(require('telescope').load_extension, 'ui-select')
 
+require('arena').setup({
+	max_items = 10,
+	keybinds = {
+		["v"] = function(win)
+			local current = win:current()
+			local info = vim.fn.getbufinfo(current.bufnr)[1]
+			vim.cmd({
+				cmd = "split",
+				args = { vim.fn.bufname(current.bufnr) },
+				mods = { vertical = true },
+			})
+			vim.fn.cursor(info.lnum, 0)
+		end,
+	}
+})
+
 require('which-key').setup {
 	delay = 0,
 	spec = {
-		{ '<leader>s', group = '[S]earch',    mode = { 'n', 'v' } },
-		{ '<leader>t', group = '[T]oggle' },
-		{ 'gr',        group = 'LSP Actions', mode = { 'n' } },
+		{ '<leader>l', group = '[L]SP Actions', mode = { 'n' } },
+		{ '<leader>o', group = '[O]pen',        mode = { 'n' } },
+		{ '<leader>s', group = '[S]earch',      mode = { 'n', 'v' } },
 	},
 }
 require('blink.cmp').setup({
-	keymap = { preset = 'default' },
+	keymap = {
+		preset = 'default',
+		['<CR>'] = { 'accept', 'fallback' }
+	},
 	appearance = { nerd_font_variant = 'mono' },
 	completion = {
 		accept = {
 			dot_repeat = false,
 		},
-		documentation = { 
-						auto_show = false,
+		documentation = {
+			auto_show = false,
 		},
-		list = { 
+		list = {
 			max_items = 10,
 			selection = { preselect = true, auto_insert = false }
 		},
@@ -95,7 +126,29 @@ require('blink.cmp').setup({
 
 require('neogit').setup()
 require('mini.statusline').setup({
-				
+	content = {
+		active = function()
+			local stl           = require('mini.statusline')
+			local mode, mode_hl = stl.section_mode({ trunc_width = 120 })
+			local diagnostics   = stl.section_diagnostics({ trunc_width = 75 })
+			-- local lsp           = stl.section_lsp({ trunc_width = 75 })
+			local filename      = stl.section_filename({ trunc_width = 140 })
+			local fileinfo      = stl.section_fileinfo({ trunc_width = 9999 }) -- Show only the file type
+			local location      = stl.section_location({ trunc_width = 9999 }) -- Show only the current cursor position
+			local search        = stl.section_searchcount({ trunc_width = 75 })
+
+			return stl.combine_groups({
+				{ hl = mode_hl,                 strings = { mode } },
+				-- { hl = 'MiniStatuslineDevinfo', strings = { diagnostics, lsp } },
+				{ hl = 'MiniStatuslineDevinfo', strings = { diagnostics } },
+				'%<', -- Mark general truncate point
+				{ hl = 'MiniStatuslineFilename', strings = { filename } },
+				'%=', -- End left alignment
+				{ hl = 'MiniStatuslineFileinfo', strings = { fileinfo } },
+				{ hl = mode_hl,                  strings = { search, location } },
+			})
+		end,
+	}
 })
 
 -- --------------------------------------------------------------------------------------
@@ -103,19 +156,22 @@ require('mini.statusline').setup({
 -- --------------------------------------------------------------------------------------
 
 -- Native
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')                                                   -- Cancel search with Esc
-vim.keymap.set('n', '<A-j>', ":m .+1<CR>==")                                                          -- Move up (Normal mode)
-vim.keymap.set('n', '<A-k>', ":m .-2<CR>==")                                                          -- Move down (Normal mode)
-vim.keymap.set('x', '<A-j>', ":m '>+1<CR>gv=gv")                                                      -- Move up (Select mode)
-vim.keymap.set('x', '<A-k>', ":m '<-2<CR>gv=gv")                                                      -- Move down (Select mode)
-vim.keymap.set('i', '<Tab>', 'pumvisible() ? "<C-n><C-y>" : "<Tab>"', { expr = true, silent = true }) -- Select first completion with tab
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>') -- Cancel search with Esc
+vim.keymap.set('n', '<A-j>', ":m .+1<CR>==")        -- Move up (Normal mode)
+vim.keymap.set('n', '<A-k>', ":m .-2<CR>==")        -- Move down (Normal mode)
+vim.keymap.set('x', '<A-j>', ":m '>+1<CR>gv=gv")    -- Move up (Select mode)
+vim.keymap.set('x', '<A-k>', ":m '<-2<CR>gv=gv")    -- Move down (Select mode)
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+
+-- Arena
+vim.keymap.set('n', '<leader>a', function() require('arena').toggle() end, { desc = "Arena" })
+
 -- Oil
-vim.keymap.set('n', '<leader>e', ":Oil<CR>", { desc = 'File [E]xplorer' })
+vim.keymap.set('n', '<leader>f', ":Oil<CR>", { desc = '[F]ile Explorer' })
 
 -- Neogit
 vim.keymap.set('n', '<leader>g', '<cmd>Neogit<CR>', { desc = '[G]it' })
@@ -129,8 +185,8 @@ vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]re
 vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
 vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' }) -- Override default behavior and theme when searching
-vim.keymap.set('n', '<leader>/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
+vim.keymap.set('n', '<leader>sb', builtin.buffers, { desc = '[S]earch Existing [B]uffers' }) -- Override default behavior and theme when searching
+-- vim.keymap.set('n', '<leader>/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
 vim.keymap.set('n', '<leader>s/',
 	function()
 		builtin.live_grep {
@@ -144,12 +200,12 @@ vim.keymap.set('n', '<leader>s/',
 local mc = require 'multicursor-nvim'
 vim.keymap.set("n", "<up>", function() mc.lineAddCursor(-1) end)
 vim.keymap.set("n", "<down>", function() mc.lineAddCursor(1) end)
-vim.keymap.set("n", "<leader><up>", function() mc.lineSkipCursor(-1) end)
-vim.keymap.set("n", "<leader><down>", function() mc.lineSkipCursor(1) end)
+vim.keymap.set("n", "<leader><up>", function() mc.lineSkipCursor(-1) end, { desc = 'Skip Cursor Up' })
+vim.keymap.set("n", "<leader><down>", function() mc.lineSkipCursor(1) end, { desc = 'Skip Cursor Down' })
 vim.keymap.set("x", "<up>", function() mc.matchAddCursor(-1) end)
 vim.keymap.set("x", "<down>", function() mc.matchAddCursor(1) end)
-vim.keymap.set("x", "<leader><up>", function() mc.matchSkipCursor(-1) end)
-vim.keymap.set("x", "<leader><down>", function() mc.matchSkipCursor(1) end)
+vim.keymap.set("x", "<leader><up>", function() mc.matchSkipCursor(-1) end, { desc = 'Skip Match Up' })
+vim.keymap.set("x", "<leader><down>", function() mc.matchSkipCursor(1) end, { desc = 'Skip Match Down' })
 vim.keymap.set("n", "<c-leftmouse>", mc.handleMouse)
 vim.keymap.set("n", "<c-leftrelease>", mc.handleMouseRelease)
 mc.addKeymapLayer(function(layerSet)
@@ -178,7 +234,7 @@ vim.diagnostic.config {
 		end,
 	},
 }
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>od', vim.diagnostic.setloclist, { desc = '[D]iagnostics' })
 -- --------------------------------------------------------------------------------------
 -- [[ AUTOCOMMANDS ]]
 -- --------------------------------------------------------------------------------------
@@ -186,15 +242,16 @@ vim.api.nvim_create_autocmd('LspAttach', {
 	group = vim.api.nvim_create_augroup('telescope-lsp-attach', { clear = true }),
 	callback = function(event)
 		local buf = event.buf
-		vim.keymap.set('n', 'grr', builtin.lsp_references, { buffer = buf, desc = '[G]oto [R]eferences' })
-		vim.keymap.set('n', 'gri', builtin.lsp_implementations,
+		vim.keymap.set('n', '<leader>lr', builtin.lsp_references, { buffer = buf, desc = '[G]oto [R]eferences' })
+		vim.keymap.set('n', '<leader>li', builtin.lsp_implementations,
 			{ buffer = buf, desc = '[G]oto [I]mplementation' })
-		vim.keymap.set('n', 'grd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
-		vim.keymap.set('n', 'grc', vim.diagnostic.open_float,
-			{ buffer = buf, desc = '[G]oto [C]ursor Diagnostics' })
-		vim.keymap.set('n', 'grt', builtin.lsp_type_definitions,
+		vim.keymap.set('n', '<leader>ld', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
+		vim.keymap.set('n', '<leader>lc', vim.diagnostic.open_float,
+			{ buffer = buf, desc = '[C]ursor Diagnostics' })
+		vim.keymap.set('n', '<leader>lt', builtin.lsp_type_definitions,
 			{ buffer = buf, desc = '[G]oto [T]ype Definition' })
-		vim.keymap.set('n', 'grf', vim.lsp.buf.format, { desc = '[F]ormat Document' })
+		vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format, { desc = '[F]ormat Document' })
+		vim.keymap.set('n', '<C-k>', vim.lsp.buf.hover)
 	end,
 })
 

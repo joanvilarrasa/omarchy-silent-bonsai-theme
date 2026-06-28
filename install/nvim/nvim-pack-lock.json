@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "arena.nvim": {
+      "rev": "9ebbf55b4f0e3815e3caf3264cc1a2721b5111e9",
+      "src": "https://github.com/dzfrias/arena.nvim"
+    },
     "blink.cmp": {
       "rev": "78336bc89ee5365633bcf754d93df01678b5c08f",
       "src": "https://github.com/saghen/blink.cmp",
@@ -8,6 +12,10 @@
     "codediff.nvim": {
       "rev": "7608f3b436ce1f84a4888f75e53079caa981a2e9",
       "src": "https://github.com/esmuellert/codediff.nvim"
+    },
+    "harpoon": {
+      "rev": "1bc17e3e42ea3c46b33c0bbad6a880792692a1b3",
+      "src": "https://github.com/ThePrimeagen/harpoon"
     },
     "mini.statusline": {
       "rev": "6a136236ec93090c820c1d2a6139aa053b2199c9",
