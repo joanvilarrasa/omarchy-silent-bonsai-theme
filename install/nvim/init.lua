@@ -19,22 +19,26 @@ vim.opt.listchars = { tab = '  ', trail = '·', nbsp = '␣' }
 vim.o.cursorline = true
 vim.o.scrolloff = 10
 vim.o.confirm = true
-vim.o.winborder = "rounded"
-vim.o.pumborder = 'rounded'
-vim.o.autocomplete = true
-vim.o.pumheight = 5
-vim.opt.complete:append('o')
-vim.opt.completeopt = { 'menuone', 'noselect' }
+vim.o.showmode = false
+vim.o.updatetime = 250 -- Default is 4000 (ms). This is how long vim wayts to acto on the swapfile and to trigger the 'CursorHold' event.
+vim.o.timeoutlen = 300 -- Default is 1000 (ms). Time that vim waits for a sequence to complete.
+vim.o.splitright = true
+vim.o.splitbelow = true
+vim.o.inccommand = 'split'
+vim.o.winborder = 'rounded'
 vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
 -- --------------------------------------------------------------------------------------
 -- [[ PLUGINS ]]
 -- --------------------------------------------------------------------------------------
+vim.loader.enable() -- Enable faster startup by caching compiled Lua modules
 vim.pack.add({
 	{ src = 'https://github.com/stevearc/oil.nvim' },
 	{ src = 'https://github.com/folke/which-key.nvim' },
+	{ src = 'https://github.com/saghen/blink.cmp',                        version = vim.version.range '1.*' },
 	{ src = 'https://github.com/nvim-mini/mini.surround' },
 	{ src = 'https://github.com/jake-stewart/multicursor.nvim' },
+	{ src = 'https://github.com/nvim-mini/mini.statusline' },
 	{ src = 'https://github.com/nvim-lua/plenary.nvim' },
 	{ src = 'https://github.com/nvim-telescope/telescope.nvim' },
 	{ src = 'https://github.com/nvim-telescope/telescope-ui-select.nvim' },
@@ -59,23 +63,56 @@ pcall(require('telescope').load_extension, 'ui-select')
 require('which-key').setup {
 	delay = 0,
 	spec = {
-		{ 'gr', group = 'LSP Actions', mode = { 'n' } },
+		{ '<leader>s', group = '[S]earch',    mode = { 'n', 'v' } },
+		{ '<leader>t', group = '[T]oggle' },
+		{ 'gr',        group = 'LSP Actions', mode = { 'n' } },
 	},
 }
+require('blink.cmp').setup({
+	keymap = { preset = 'default' },
+	appearance = { nerd_font_variant = 'mono' },
+	completion = {
+		accept = {
+			dot_repeat = false,
+		},
+		documentation = { 
+						auto_show = false,
+		},
+		list = { 
+			max_items = 10,
+			selection = { preselect = true, auto_insert = false }
+		},
+		trigger = {
+			show_on_backspace = true,
+		}
+	},
+	sources = {
+		default = { 'lsp', 'path' },
+	},
+	fuzzy = { implementation = 'lua' },
+	signature = { enabled = true },
+})
 
 require('neogit').setup()
+require('mini.statusline').setup({
+				
+})
 
 -- --------------------------------------------------------------------------------------
 -- [[ KEYMAPS AND CONFIG ]]
 -- --------------------------------------------------------------------------------------
 
 -- Native
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>') -- Cancel search with Esc
-vim.keymap.set('n', '<A-j>', ":m .+1<CR>==") -- Move up (Normal mode)
-vim.keymap.set('n', '<A-k>', ":m .-2<CR>==") -- Move down (Normal mode)
-vim.keymap.set('x', '<A-j>', ":m '>+1<CR>gv=gv") -- Move up (Select mode)
-vim.keymap.set('x', '<A-k>', ":m '<-2<CR>gv=gv") -- Move down (Select mode)
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')                                                   -- Cancel search with Esc
+vim.keymap.set('n', '<A-j>', ":m .+1<CR>==")                                                          -- Move up (Normal mode)
+vim.keymap.set('n', '<A-k>', ":m .-2<CR>==")                                                          -- Move down (Normal mode)
+vim.keymap.set('x', '<A-j>', ":m '>+1<CR>gv=gv")                                                      -- Move up (Select mode)
+vim.keymap.set('x', '<A-k>', ":m '<-2<CR>gv=gv")                                                      -- Move down (Select mode)
 vim.keymap.set('i', '<Tab>', 'pumvisible() ? "<C-n><C-y>" : "<Tab>"', { expr = true, silent = true }) -- Select first completion with tab
+vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Oil
 vim.keymap.set('n', '<leader>e', ":Oil<CR>", { desc = 'File [E]xplorer' })
@@ -92,7 +129,6 @@ vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]re
 vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
 vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
 vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' }) -- Override default behavior and theme when searching
 vim.keymap.set('n', '<leader>/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
 vim.keymap.set('n', '<leader>s/',
@@ -120,6 +156,29 @@ mc.addKeymapLayer(function(layerSet)
 	layerSet("n", "<esc>", function() mc.clearCursors() end)
 end)
 
+-- Diagnostics
+vim.diagnostic.config {
+	update_in_insert = false,
+	severity_sort = true,
+	float = { border = 'rounded', source = 'if_many' },
+	underline = { severity = { min = vim.diagnostic.severity.WARN } },
+
+	-- Can switch between these as you prefer
+	virtual_text = false, -- Text shows up at the end of the line
+	virtual_lines = false, -- Text shows up underneath the line, with virtual lines
+
+	-- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
+	jump = {
+		on_jump = function(_, bufnr)
+			vim.diagnostic.open_float {
+				bufnr = bufnr,
+				scope = 'cursor',
+				focus = false,
+			}
+		end,
+	},
+}
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 -- --------------------------------------------------------------------------------------
 -- [[ AUTOCOMMANDS ]]
 -- --------------------------------------------------------------------------------------
@@ -136,20 +195,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		vim.keymap.set('n', 'grt', builtin.lsp_type_definitions,
 			{ buffer = buf, desc = '[G]oto [T]ype Definition' })
 		vim.keymap.set('n', 'grf', vim.lsp.buf.format, { desc = '[F]ormat Document' })
-		vim.keymap.del('n', 'grx')
-		vim.keymap.del('n', 'gra')
-		vim.keymap.del('n', 'grn')
-		vim.keymap.del('n', 'gO')
-	end,
-})
-
-vim.api.nvim_create_autocmd('LspAttach', {
-	group = vim.api.nvim_create_augroup('my.lsp', {}),
-	callback = function(ev)
-		local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
-		if client:supports_method('textDocument/completion') then
-			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
-		end
 	end,
 })
 
@@ -181,6 +226,57 @@ vim.lsp.config['zls'] = {
 vim.lsp.config['gopls'] = {}
 -- Biome
 vim.lsp.config['biome'] = {}
+
+-- Lua
+vim.lsp.config['lua_ls'] = {
+	cmd = { 'lua-language-server' },
+	filetypes = { 'lua' },
+	root_markers = {
+		'.emmyrc.json',
+		'.luarc.json',
+		'.luarc.jsonc',
+		'.luacheckrc',
+		'.stylua.toml',
+		'stylua.toml',
+		'selene.toml',
+		'selene.yml',
+		'.git',
+	},
+	settings = {
+		Lua = {
+			codeLens = { enable = true },
+			hint = { enable = true, semicolon = 'Disable' },
+		},
+	},
+
+	on_init = function(client)
+		if client.workspace_folders then
+			local path = client.workspace_folders[1].name
+			if
+			    path ~= vim.fn.stdpath('config')
+			    and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc'))
+			then
+				return
+			end
+		end
+		client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+			runtime = {
+				version = 'LuaJIT',
+				path = {
+					'lua/?.lua',
+					'lua/?/init.lua',
+				},
+			},
+			workspace = {
+				checkThirdParty = false,
+				library = {
+					vim.env.VIMRUNTIME,
+					vim.api.nvim_get_runtime_file("lua/lspconfig", false)[1],
+				},
+			},
+		})
+	end
+}
 
 -- Enable or disable languages
 vim.lsp.enable({ "lua_ls", "zls", "gopls", "biome" })
