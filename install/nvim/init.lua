@@ -53,16 +53,10 @@ require('mini.surround').setup()
 require('multicursor-nvim').setup()
 require('oil').setup()
 
-local telescope_actions = require "telescope.actions"
 require('telescope').setup {
 	pickers = {
 		buffers = {
 			initial_mode = "normal",
-			mappings = {
-				n = {
-					["<c-d>"] = telescope_actions.delete_buffer + telescope_actions.move_to_top,
-				}
-			},
 		},
 	},
 	extensions = {
@@ -92,7 +86,6 @@ require('which-key').setup {
 	delay = 0,
 	spec = {
 		{ '<leader>l', group = '[L]SP Actions', mode = { 'n' } },
-		{ '<leader>o', group = '[O]pen',        mode = { 'n' } },
 		{ '<leader>s', group = '[S]earch',      mode = { 'n', 'v' } },
 	},
 }
@@ -234,7 +227,7 @@ vim.diagnostic.config {
 		end,
 	},
 }
-vim.keymap.set('n', '<leader>od', vim.diagnostic.setloclist, { desc = '[D]iagnostics' })
+vim.keymap.set('n', '<leader>d', vim.diagnostic.setloclist, { desc = '[D]iagnostics' })
 -- --------------------------------------------------------------------------------------
 -- [[ AUTOCOMMANDS ]]
 -- --------------------------------------------------------------------------------------
