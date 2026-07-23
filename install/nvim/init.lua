@@ -107,7 +107,8 @@ require('blink.cmp').setup({
 			selection = { preselect = true, auto_insert = false }
 		},
 		trigger = {
-			show_on_backspace = true,
+			show_on_backspace_after_accept = false,
+			show_on_backspace_after_insert_enter = false,
 		}
 	},
 	sources = {
