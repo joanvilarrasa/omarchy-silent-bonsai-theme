@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "silent-bonsai.workspaces",
+  "name": "Silent Bonsai Workspaces",
+  "version": "1.0.0",
+  "author": "Joan Vilarrasa",
+  "description": "Workspace names and application icons with the classic Silent Bonsai styling",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Workspaces.qml"
+  },
+  "barWidget": {
+    "displayName": "Silent Bonsai Workspaces",
+    "description": "Workspace names and application icons",
+    "category": "Compositor",
+    "allowMultiple": false
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.workspaces"
+  }
+}

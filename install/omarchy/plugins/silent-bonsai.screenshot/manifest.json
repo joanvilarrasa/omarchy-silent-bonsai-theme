@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "silent-bonsai.screenshot",
+  "name": "Screenshot",
+  "version": "1.0.0",
+  "author": "Joan Vilarrasa",
+  "description": "Capture a smart screenshot from the bar",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Screenshot.qml"
+  },
+  "barWidget": {
+    "displayName": "Screenshot",
+    "description": "Capture a smart screenshot",
+    "category": "Utility",
+    "defaultSection": "center",
+    "allowMultiple": false
+  }
+}

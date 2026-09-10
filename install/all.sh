@@ -1,10 +1,15 @@
-THEMES_DIR="$HOME/.config/omarchy/themes/"
+#!/usr/bin/env bash
+
+set -euo pipefail
+
 SB_THEME_NAME="silent-bonsai"
-SB_THEME_PATH="$THEMES_DIR$SB_THEME_NAME"
+INSTALL_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+SB_THEME_PATH="$(dirname -- "$INSTALL_DIR")"
 export SB_THEME_PATH
 
-$SB_THEME_PATH/install/packages/install.sh
-$SB_THEME_PATH/install/omarchy/install.sh
-$SB_THEME_PATH/install/waybar/install.sh
+bash "$SB_THEME_PATH/install/packages/install.sh"
+bash "$SB_THEME_PATH/install/packages/uninstall-terminals.sh"
+bash "$SB_THEME_PATH/install/omarchy/install.sh"
+bash "$SB_THEME_PATH/install/ghostty/install.sh"
 
-omarchy-theme-set silent-bonsai
+omarchy theme set "$SB_THEME_NAME"
