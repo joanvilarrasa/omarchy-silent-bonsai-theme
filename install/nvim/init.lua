@@ -35,6 +35,7 @@ vim.loader.enable() -- Enable faster startup by caching compiled Lua modules
 vim.pack.add({
 	{ src = 'https://github.com/stevearc/oil.nvim' },
 	{ src = 'https://github.com/folke/which-key.nvim' },
+	{ src = 'https://github.com/folke/todo-comments.nvim' },
 	{ src = 'https://github.com/saghen/blink.cmp',                        version = vim.version.range '1.*' },
 	{ src = 'https://github.com/nvim-mini/mini.surround' },
 	{ src = 'https://github.com/jake-stewart/multicursor.nvim' },
@@ -52,6 +53,30 @@ vim.pack.add({
 require('mini.surround').setup()
 require('multicursor-nvim').setup()
 require('oil').setup()
+require('todo-comments').setup({
+	colors = {
+		todo = { '#8edac5' },
+		error = { 'DiagnosticError', 'ErrorMsg' },
+		warning = { 'DiagnosticWarn', 'WarningMsg' },
+		info = { 'DiagnosticInfo', '#7C98A1' },
+		purple = { '#B29CE7' },
+	},
+	highlight = {
+		before = '',
+		keyword = 'wide',
+		after = '',
+	},
+	keywords = {
+		TODO = { icon = ' ', color = 'todo' },
+		FIX = { icon = ' ', color = 'error' },
+		HACK = { icon = ' ', color = 'warning' },
+		WARN = { icon = ' ', color = 'warning' },
+		NOTE = { icon = ' ', color = 'info' },
+		DANGER = { icon = ' ', color = 'error' },
+		EXPERIMENTAL = { icon = ' ', color = 'purple' },
+	},
+})
+
 
 require('telescope').setup {
 	pickers = {
@@ -65,6 +90,7 @@ require('telescope').setup {
 }
 pcall(require('telescope').load_extension, 'fzf')
 pcall(require('telescope').load_extension, 'ui-select')
+pcall(require('telescope').load_extension, 'todo-comments')
 
 require('arena').setup({
 	max_items = 10,
@@ -87,6 +113,7 @@ require('which-key').setup {
 	spec = {
 		{ '<leader>l', group = '[L]SP Actions', mode = { 'n' } },
 		{ '<leader>s', group = '[S]earch',      mode = { 'n', 'v' } },
+		{ '<leader>st', group = '[T]odo',       mode = { 'n' } },
 	},
 }
 require('blink.cmp').setup({
@@ -180,6 +207,13 @@ vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iag
 vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
 vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
 vim.keymap.set('n', '<leader>sb', builtin.buffers, { desc = '[S]earch Existing [B]uffers' }) -- Override default behavior and theme when searching
+vim.keymap.set('n', '<leader>sta', '<cmd>TodoTelescope<CR>', { desc = '[S]earch [T]odo [A]ll' })
+vim.keymap.set('n', '<leader>stt', '<cmd>TodoTelescope keywords=TODO<CR>', { desc = '[S]earch [T]odo [T]odos' })
+vim.keymap.set('n', '<leader>stw', '<cmd>TodoTelescope keywords=WARN,HACK<CR>', { desc = '[S]earch [T]odo [W]arnings' })
+vim.keymap.set('n', '<leader>stn', '<cmd>TodoTelescope keywords=NOTE<CR>', { desc = '[S]earch [T]odo [N]otes' })
+vim.keymap.set('n', '<leader>ste', '<cmd>TodoTelescope keywords=EXPERIMENTAL<CR>',
+	{ desc = '[S]earch [T]odo [E]xperimental' })
+vim.keymap.set('n', '<leader>std', '<cmd>TodoTelescope keywords=DANGER,FIX<CR>', { desc = '[S]earch [T]odo [D]angers' })
 -- vim.keymap.set('n', '<leader>/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
 vim.keymap.set('n', '<leader>s/',
 	function()

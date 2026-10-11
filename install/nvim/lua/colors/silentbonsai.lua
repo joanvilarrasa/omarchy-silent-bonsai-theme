@@ -254,6 +254,7 @@ local function get_highlights(c, opts)
     Statement                   = { fg = c.fg },
     String                      = { fg = c.cyan },
     Todo                        = { bg = c.todo, fg = c.bg },
+    Experimental                = { bg = c.purple, fg = c.bg },
     Type                        = { fg = c.fg_dark },
     Underlined                  = { underline = true },
     debugBreakpoint             = { bg = blend(c.info, 0.1, c.bg), fg = c.info },
