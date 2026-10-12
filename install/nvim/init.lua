@@ -72,7 +72,6 @@ require('todo-comments').setup({
 		HACK = { icon = ' ', color = 'warning' },
 		WARN = { icon = ' ', color = 'warning' },
 		NOTE = { icon = ' ', color = 'info' },
-		DANGER = { icon = ' ', color = 'error' },
 		EXPERIMENTAL = { icon = ' ', color = 'purple' },
 	},
 })
@@ -213,7 +212,7 @@ vim.keymap.set('n', '<leader>stw', '<cmd>TodoTelescope keywords=WARN,HACK<CR>', 
 vim.keymap.set('n', '<leader>stn', '<cmd>TodoTelescope keywords=NOTE<CR>', { desc = '[S]earch [T]odo [N]otes' })
 vim.keymap.set('n', '<leader>ste', '<cmd>TodoTelescope keywords=EXPERIMENTAL<CR>',
 	{ desc = '[S]earch [T]odo [E]xperimental' })
-vim.keymap.set('n', '<leader>std', '<cmd>TodoTelescope keywords=DANGER,FIX<CR>', { desc = '[S]earch [T]odo [D]angers' })
+vim.keymap.set('n', '<leader>stf', '<cmd>TodoTelescope keywords=FIX<CR>', { desc = '[S]earch [T]odo [F]ix' })
 -- vim.keymap.set('n', '<leader>/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
 vim.keymap.set('n', '<leader>s/',
 	function()
