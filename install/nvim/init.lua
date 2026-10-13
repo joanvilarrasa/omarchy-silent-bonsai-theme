@@ -76,7 +76,6 @@ require('todo-comments').setup({
 	},
 })
 
-
 require('telescope').setup {
 	pickers = {
 		buffers = {
@@ -110,9 +109,9 @@ require('arena').setup({
 require('which-key').setup {
 	delay = 0,
 	spec = {
-		{ '<leader>l', group = '[L]SP Actions', mode = { 'n' } },
-		{ '<leader>s', group = '[S]earch',      mode = { 'n', 'v' } },
-		{ '<leader>st', group = '[T]odo',       mode = { 'n' } },
+		{ '<leader>l',  group = '[L]SP Actions', mode = { 'n' } },
+		{ '<leader>s',  group = '[S]earch',      mode = { 'n', 'v' } },
+		{ '<leader>st', group = '[T]odo',        mode = { 'n' } },
 	},
 }
 require('blink.cmp').setup({
