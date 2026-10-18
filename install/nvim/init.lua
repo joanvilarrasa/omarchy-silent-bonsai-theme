@@ -73,6 +73,7 @@ require('todo-comments').setup({
 		WARN = { icon = ' ', color = 'warning' },
 		NOTE = { icon = ' ', color = 'info' },
 		EXPERIMENTAL = { icon = ' ', color = 'purple' },
+		QUESTION = { icon = ' ', color = 'purple' },
 	},
 })
 
@@ -382,3 +383,6 @@ silent_bonsai.setup {
 	},
 }
 silent_bonsai.load()
+
+-- Disable Neovim's built-in TODO highlight (let todo-comments handle it)
+vim.api.nvim_set_hl(0, 'Todo', { link = 'Comment' });
