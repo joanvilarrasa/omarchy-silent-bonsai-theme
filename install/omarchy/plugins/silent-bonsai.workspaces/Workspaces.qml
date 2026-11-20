@@ -106,7 +106,7 @@ BarWidget {
           color: "transparent"
           borderSpec: workspaceItem.focused
             ? Border.flat(Color.accent, 1)
-            : (workspaceButton.tooltipHovered ? Border.flat("#2b4040", 1) : Border.none())
+            : (workspaceButton.tooltipHovered ? Border.flat("#1d3d35", 1) : Border.none())
           radius: height / 2
         }
 
@@ -117,7 +117,7 @@ BarWidget {
           text: root.workspaceLabel(workspaceItem.modelData, workspaceItem.workspace)
           foreground: workspaceItem.focused
             ? Color.accent
-            : (tooltipHovered ? (root.bar ? root.bar.barForeground : Color.foreground) : "#7f7f7f")
+            : (tooltipHovered ? (root.bar ? root.bar.barForeground : Color.foreground) : "#759895")
           useActiveColor: false
           opacity: workspaceItem.occupied || workspaceItem.focused ? 1 : 0.5
           horizontalMargin: 8

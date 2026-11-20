@@ -5,59 +5,59 @@ theme[main_bg]=""
 theme[main_fg]="#f5e6de"
 
 # Title color for boxes
-theme[title]="#eddcc8"
+theme[title]="#f5e6de"
 
 # Highlight color for keyboard shortcuts
-theme[hi_fg]="#eddcc8"
+theme[hi_fg]="#f5e6de"
 
 # Background color of selected item in processes box
-theme[selected_bg]="#1A2A2E"
+theme[selected_bg]="#1d3d35"
 
 # Foreground color of selected item in processes box
 theme[selected_fg]="#f5e6de"
 
 # Color of inactive/disabled text
-theme[inactive_fg]="#7C98A1"
+theme[inactive_fg]="#759895"
 
 # Misc colors for processes box including mini cpu graphs, details memory graph and details status text
-theme[proc_misc]="#8edac5"
+theme[proc_misc]="#90dbd2"
 
 # Box outline and divider line color
-theme[cpu_box]="#eddcc8"
-theme[mem_box]="#eddcc8"
-theme[net_box]="#eddcc8"
-theme[proc_box]="#eddcc8"
-theme[div_line]="#345760"
+theme[cpu_box]="#f5e6de"
+theme[mem_box]="#f5e6de"
+theme[net_box]="#f5e6de"
+theme[proc_box]="#f5e6de"
+theme[div_line]="#1c4644"
 
 # Gradient for all meters and graphs
-theme[temp_start]="#345760"
-theme[temp_mid]="#eddcc8"
+theme[temp_start]="#1c4644"
+theme[temp_mid]="#f5e6de"
 theme[temp_end]="#FC98AB"
 
-theme[cpu_start]="#345760"
-theme[cpu_mid]="#eddcc8"
+theme[cpu_start]="#1c4644"
+theme[cpu_mid]="#f5e6de"
 theme[cpu_end]="#FC98AB"
 
-theme[free_start]="#345760"
-theme[free_mid]="#eddcc8"
+theme[free_start]="#1c4644"
+theme[free_mid]="#f5e6de"
 theme[free_end]="#FC98AB"
 
-theme[cached_start]="#345760"
-theme[cached_mid]="#eddcc8"
+theme[cached_start]="#1c4644"
+theme[cached_mid]="#f5e6de"
 theme[cached_end]="#FC98AB"
 
-theme[available_start]="#345760"
-theme[available_mid]="#eddcc8"
+theme[available_start]="#1c4644"
+theme[available_mid]="#f5e6de"
 theme[available_end]="#FC98AB"
 
-theme[used_start]="#345760"
-theme[used_mid]="#eddcc8"
+theme[used_start]="#1c4644"
+theme[used_mid]="#f5e6de"
 theme[used_end]="#FC98AB"
 
-theme[download_start]="#345760"
-theme[download_mid]="#eddcc8"
+theme[download_start]="#1c4644"
+theme[download_mid]="#f5e6de"
 theme[download_end]="#FC98AB"
 
-theme[upload_start]="#345760"
-theme[upload_mid]="#eddcc8"
+theme[upload_start]="#1c4644"
+theme[upload_mid]="#f5e6de"
 theme[upload_end]="#FC98AB"

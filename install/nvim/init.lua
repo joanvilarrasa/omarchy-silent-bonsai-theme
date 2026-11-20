@@ -55,11 +55,11 @@ require('multicursor-nvim').setup()
 require('oil').setup()
 require('todo-comments').setup({
 	colors = {
-		todo = { '#8edac5' },
+		todo = { '#a7d4e4' },
 		error = { 'DiagnosticError', 'ErrorMsg' },
 		warning = { 'DiagnosticWarn', 'WarningMsg' },
-		info = { 'DiagnosticInfo', '#7C98A1' },
-		purple = { '#B29CE7' },
+		info = { 'DiagnosticInfo', '#759895' },
+		purple = { '#9a92de' },
 	},
 	highlight = {
 		before = '',
