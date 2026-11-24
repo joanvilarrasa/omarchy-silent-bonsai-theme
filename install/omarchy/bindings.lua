@@ -64,7 +64,8 @@ for _, keys in ipairs(disabled_bindings) do
   hl.unbind(keys)
 end
 
-o.bind("SUPER + SHIFT + T", "Terminal", { omarchy = "terminal" })
+-- Replace the default Activity binding; do not launch both actions.
+o.rebind("SUPER + SHIFT + T", "Terminal", { omarchy = "terminal" })
 o.bind("SUPER + SHIFT + F", "File manager", { omarchy = "nautilus" })
 o.bind("SUPER + SHIFT + B", "Browser", { omarchy = "browser" })
 o.bind("SUPER + SHIFT + E", "Editor", { omarchy = "editor" })
